@@ -2,10 +2,10 @@
 
 الهدف: تحويل مقالات [ABSI.CC](https://www.absi.cc) إلى MP3 عربي بصوت Piper Kareem من دون تشغيل الكمبيوتر.
 
-**الحالة:** تم رفع الشفرة إلى GitHub، ولم يتم إثبات عملها على Render أو Cloudflare حتى الآن.
+**الحالة (11 نوفمبر 2026):** Render يعمل وفحص `/health` أعاد `voice_present: true`، وCloudflare Worker يعمل. لم يتم بعد إثبات توليد ملف MP3 فعلي. تمت إضافة صفحة `/diagnostics` لمعرفة حالة آخر تشغيل مجدول دون كشف المفاتيح.
 
 ## البنية
-1. Cloudflare Worker يجلب آخر 25 مقالًا من خلاصة Blogger العامة كل ساعتين.
+1. Cloudflare Worker يجلب آخر 100 مقالًا من خلاصة Blogger العامة كل ساعتين، ويعطي أولوية تجريبية لمقال الباوندي عند وجوده في الخلاصة.
 2. يتجاوز المقالات التي سجلت سابقًا في R2، ويعالج مقالًا جديدًا واحدًا في كل تشغيل.
 3. يرسل محتوى المقال إلى خادم Render عبر HTTPS وبمفتاح مشترك.
 4. يقوم Python + Piper بإنتاج WAV ثم FFmpeg لإنتاج MP3 ويحفظه في R2.
@@ -37,3 +37,11 @@ https://render.com/docs/free
 https://developers.cloudflare.com/workers/configuration/cron-triggers/
 https://developers.cloudflare.com/r2/
 https://huggingface.co/rhasspy/piper-voices/tree/main/ar/ar_JO/kareem/medium
+
+## التشخيص (دون مفاتيح)
+
+- رابط فحص آخر تشغيل مجدول: `https://absiaudiotext.3bdusalam.workers.dev/diagnostics`
+- إذا ظهرت `not_run_since_diagnostics_enabled`، انتظر دورة الجدولة التالية أو اختبر حدث Cron من لوحة Cloudflare.
+- إذا ظهرت `generation_http_error`، تحقق من `httpStatus`: `401` مشكلة تطابق المفتاح المشترك، `503` مشكلة صوت أو R2 أو خادم Render، `422` مقال غير صالح أو طويل جدًا.
+- تسجيل `/health` أو `/status` لا يؤدي إلى إنشاء ملف صوت.
+- نتائج الصفحة عامة ومقتصرة على الحالة والرموز، ولا تسجّل الأسرار أو النصوص.
