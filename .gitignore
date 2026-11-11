@@ -1,6 +1,14 @@
 .env
+.env.*
+!.env.example
 .venv/
 __pycache__/
 *.pyc
-*.wav
+.pytest_cache/
+*.onnx
+*.onnx.json
 *.mp3
+*.wav
+node_modules/
+.dev.vars
+.wrangler/
