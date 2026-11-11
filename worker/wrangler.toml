@@ -1,0 +1,11 @@
+name = "absi-audio-cloud"
+main = "index.js"
+compatibility_date = "2026-11-01"
+workers_dev = true
+
+[[r2_buckets]]
+binding = "AUDIO_BUCKET"
+bucket_name = "absi-audio"
+
+[triggers]
+crons = ["0 */2 * * *"]
