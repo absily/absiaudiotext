@@ -1,0 +1,26 @@
+<!-- ABSI Audio player: add only after the Worker and real MP3 are verified. -->
+<script>
+(function () {
+  if (!/\/20\d{2}\/\d{2}\/[\w-]+\.html$/.test(location.pathname)) return;
+  const WORKER_URL = 'https://REPLACE-WITH-YOUR-WORKER.workers.dev';
+  const canonical = document.querySelector('link[rel="canonical"]')?.href || location.href;
+  fetch(WORKER_URL + '/status?url=' + encodeURIComponent(canonical))
+    .then(response => response.ok ? response.json() : null)
+    .then(data => {
+      if (!data?.ready || !data.audioUrl) return;
+      const article = document.querySelector('.post-body, .entry-content, article');
+      if (!article) return;
+      const player = document.createElement('section');
+      player.setAttribute('aria-label','استمع إلى المقال');
+      player.style.cssText = 'margin:16px 0;padding:14px;border:1px solid #b58b44;border-radius:12px;background:#fffaf1;';
+      const heading = document.createElement('strong');
+      heading.textContent = 'استمع إلى المقال';
+      heading.style.cssText = 'display:block;margin-bottom:8px';
+      const audio = document.createElement('audio');
+      audio.controls = true; audio.preload = 'none'; audio.src = data.audioUrl;
+      audio.style.width='100%';
+      player.append(heading,audio);
+      article.prepend(player);
+    }).catch(() => {});
+})();
+</script>
