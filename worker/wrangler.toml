@@ -9,3 +9,6 @@ bucket_name = "absi-audio"
 
 [triggers]
 crons = ["0 */2 * * *"]
+
+[vars]
+RENDER_URL = "https://absiaudiotext.onrender.com"
